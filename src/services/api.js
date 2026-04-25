@@ -1,31 +1,37 @@
-const BASE_URL = import.meta.env.VITE_API_URL;
 
 // ======================
 // 🔐 LOGIN
 // ======================
+const BASE_URL = "https://amsi-project-chzs.vercel.app";
+
 export const loginUser = async (email, senha) => {
-  const response = await fetch(`${BASE_URL}/https://amsi-project-chzs.vercel.app/auth/token/`, {
+  const response = await fetch("${BASE_URL}/auth/token/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "ngrok-skip-browser-warning": "true",
     },
     body: JSON.stringify({
       login: email,
       senha: senha,
-      id_usuario_fk: 0,
-      dispositivo_logado: "Desktop",
-      localizacao: "Brasil",
-      navegador: navigator.userAgent,
     }),
   });
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.detail || "Usuário inválido");
+  let data = null;
+
+  try {
+    const tetxt = await response.text();
+    data = text ? JSON.parse(text) : null; 
+  } catch (e) {
+      console.error("Resposta não é JSON:", e);
+    
   }
 
-  return await response.json();
+  if (!response.ok) {
+    const message = data?.detail || "Usuário ou Senha inválidos";
+    throw new Error(message);
+  }
+
+  return data
 };
 
 // ======================

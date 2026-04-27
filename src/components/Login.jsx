@@ -9,25 +9,32 @@ function Login() {
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      await loginUser(email, senha);
+      navigate("/home");
+    } catch (err) {
+        if(err instanceof Error) {
+          setErro(err.message);
+        } else{
+          setErro("Erro inseperado");
+        }
+
+
+      setTimeout(() => {
+        setErro("");
+      }, 3000);
+    }
+  };
 
   return (
     <div className="login-container">
       <div className="login-box">
         <h2>Login</h2>
 
-        <form onSubmit={async (e) => {
-          e.preventDefault();
-          try {
-            await loginUser(email, senha);
-            navigate("/home");
-          } catch (err) {
-            setErro(err.message);
-
-            setTimeout(() => {
-              setErro("");
-            }, 3000);
-          }
-        }}>
+        <form onSubmit={handleSubmit}>
           <input
             type="email"
             placeholder="Email"
@@ -43,8 +50,9 @@ function Login() {
           />
 
           <button type="submit">Entrar</button>
+
+          {erro && <p style={{ color: "red" }}>{erro}</p>}
         </form>
-        {erro && <p className="erro">{erro}</p>}
       </div>
     </div>
   );
